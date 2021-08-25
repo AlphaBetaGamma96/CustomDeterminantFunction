@@ -112,9 +112,6 @@ class DeterminantBackward(Function):
 
 #==============================================================================#
 
-A = 2 #number of rows/cols in matrix
-matrix = torch.randn(A,A,requires_grad=True)
-
 def pytorch_det(matrix):
   matrices = torch.linalg.det(matrix)
   return matrices.sum()
@@ -125,31 +122,141 @@ def custom_det(matrix):
 
 
 if(__name__=="__main__"):
+  """
+  #non-singular example! 
+  A = 2 #number of rows/cols in matrix
+  matrix = torch.randn(A,A,requires_grad=True)
+  """  
+  #singular example!
+  matrix = torch.Tensor([[1,-2],[-3,6]])
+  matrix.requires_grad=True
+  
+  print("matrix: ",matrix)
 
   custom_out = custom_det(matrix)
   custom_grad = torch.autograd.grad(custom_out, matrix, torch.ones_like(custom_out))[0]
   custom_gradgrad = torch.autograd.functional.hessian(custom_det, matrix)
 
-  pytorch_out = custom_det(matrix)
+  pytorch_out = pytorch_det(matrix)
   pytorch_grad = torch.autograd.grad(pytorch_out, matrix, torch.ones_like(pytorch_out))[0]
   pytorch_gradgrad = torch.autograd.functional.hessian(pytorch_det, matrix)
-    
+  
+  print("\n")
   print("Output")
   print("Custom:  \n",custom_out)
   print("PyTorch: \n",pytorch_out)
-
+  print("\n")
   print("1st-order gradient")
   print("Custom:  \n",custom_grad)
   print("PyTorch: \n",pytorch_grad)
-  
+  print("\n")
   print("2nd-order gradient")
   print("Custom:  \n",custom_gradgrad)
   print("PyTorch: \n",pytorch_gradgrad)
 
+
+#Example for non-singular matrix
+"""
+matrix:  tensor([[ 1.5410, -0.2934],
+        [-2.1788,  0.5684]], requires_grad=True)
+
+Output
+Custom:  
+ tensor(0.2366, grad_fn=<DeterminantBackward>)
+PyTorch: 
+ tensor(0.2366, grad_fn=<SumBackward0>)
+
+
+1st-order gradient
+Custom:  
+ tensor([[0.5684, 2.1788],
+        [0.2934, 1.5410]])
+PyTorch: 
+ tensor([[0.5684, 2.1788],
+        [0.2934, 1.5410]])
+
+
+2nd-order gradient
+Custom:  
+ tensor([[[[ 1.4139e-08,  2.7272e-08],
+          [-1.4901e-08,  1.0000e+00]],
+
+         [[-2.7272e-08,  1.4139e-08],
+          [-1.0000e+00, -1.4901e-08]]],
+
+
+        [[[ 1.4901e-08, -1.0000e+00],
+          [ 1.3781e-08,  5.7990e-08]],
+
+         [[ 1.0000e+00,  1.4901e-08],
+          [-5.7990e-08,  1.3781e-08]]]])
+PyTorch: 
+ tensor([[[[ 1.1921e-07,  0.0000e+00],
+          [ 0.0000e+00,  1.0000e+00]],
+
+         [[ 9.5367e-07,  1.9073e-06],
+          [-1.0000e+00,  9.5367e-07]]],
+
+
+        [[[ 1.1921e-07, -1.0000e+00],
+          [ 2.9802e-08,  1.1921e-07]],
+
+         [[ 1.0000e+00,  9.5367e-07],
+          [-1.1921e-07,  0.0000e+00]]]])
+
+"""  
   
-  
-  
-  
+#Example for singular matrix
+"""
+matrix:  tensor([[ 1., -2.],
+        [-3.,  6.]], requires_grad=True)
+
+
+Output
+Custom:  
+ tensor(1.1709e-08, grad_fn=<DeterminantBackward>)
+PyTorch: 
+ tensor(1.7881e-07, grad_fn=<SumBackward0>)
+
+
+1st-order gradient
+Custom:  
+ tensor([[6.0000, 3.0000],
+        [2.0000, 1.0000]])
+PyTorch: 
+ tensor([[6., 3.],
+        [2., 1.]])
+
+
+2nd-order gradient
+Custom:  
+ tensor([[[[ 0.,  0.],
+          [ 0.,  1.]],
+
+         [[ 0.,  0.],
+          [-1.,  0.]]],
+
+
+        [[[ 0., -1.],
+          [ 0.,  0.]],
+
+         [[ 1.,  0.],
+          [ 0.,  0.]]]])
+PyTorch: 
+ tensor([[[[-1.2000e-01, -6.0000e-02],
+          [-4.0000e-02,  9.8000e-01]],
+
+         [[ 2.4000e-01,  1.2000e-01],
+          [-9.2000e-01,  4.0000e-02]]],
+
+
+        [[[ 1.0897e+02,  5.3486e+01],
+          [ 3.6324e+01,  1.8162e+01]],
+
+         [[ 5.4586e+01,  2.6793e+01],
+          [ 1.7862e+01,  8.9310e+00]]]])
+
+"""
   
   
   
