@@ -19,7 +19,6 @@ def get_gamma(s):
 
 def get_rho(s):
   if(s.shape[-1] == 2):
-    #return s.new_zeros(*s.shape, 1)
     return s.new_ones(*s.shape,1)
   _gamma = get_gamma(s)
   idx = idx_perm(s.shape[-1], 3, s.device)[-1]
@@ -114,7 +113,7 @@ class DeterminantBackward(Function):
 
 def pytorch_det(matrix):
   matrices = torch.linalg.det(matrix)
-  return matrices.sum()
+  return matrices
   
 def custom_det(matrix):
   matrices = Determinant.apply(matrix)
