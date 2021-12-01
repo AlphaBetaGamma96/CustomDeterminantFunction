@@ -333,7 +333,24 @@ for i in range(2):
 
 
 """
-For, for the 1st backward check it will thrown an error for raise_exception=True
+Output: 
+
+forward check (sign):  True
+forward check (logabs):  True
+gradcheck:  False
+gradgradcheck:  True
+
+Check custom function vs naive function
+For larger matrices, in D or N, the difference will become more apparent
+
+Jacobian check:  0 True
+Jacobian check:  1 True
+Hessian check:  0 0 True
+Hessian check:  0 1 True
+Hessian check:  1 0 True
+Hessian check:  1 1 True
+
+For the 1st backward check it will thrown an error for raise_exception=True
 
 backward_check = torch.autograd.gradcheck(func=custom_summed_det, inputs=(A, log_envs), raise_exception=True)
 
