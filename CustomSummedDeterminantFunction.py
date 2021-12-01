@@ -9,6 +9,8 @@ from itertools import permutations
 torch.manual_seed(0)
 torch.set_default_dtype(torch.float64)
 
+#idx_perm, get_log_gamma, get_log_rho shamelessly taken from https://github.com/deepqmc !
+
 @lru_cache()
 def idx_perm(n, r, device=torch.device('cpu')): 
   idx = list(permutations(range(n), r))
